@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: Number(env.PORT) || 4173,
       strictPort: true,
-      allowedHosts: ['event-management-tksw.onrender.com', 'localhost', '127.0.0.1'],
+      allowedHosts: ['event-management-tksw.onrender.com/', 'localhost', '127.0.0.1'],
     },
   }
 })
