@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Users (
     Name VARCHAR(255) NOT NULL,
     Email VARCHAR(255) UNIQUE NOT NULL,
     Password VARCHAR(255) NOT NULL,
-    Role ENUM('Student', 'ClubAdmin', 'CollegeAdmin') DEFAULT 'Student',
+    Role ENUM('Student', 'ClubAdmin', 'CollegeAdmin', 'Admin', 'Super Admin') DEFAULT 'Student',
     Department VARCHAR(100),
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

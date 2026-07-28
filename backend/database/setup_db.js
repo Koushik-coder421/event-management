@@ -11,7 +11,10 @@ const connection = mysql.createConnection({
 });
 
 const schemaPath = path.join(__dirname, 'schema.sql');
-const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+let schemaSql = fs.readFileSync(schemaPath, 'utf8');
+const databaseName = process.env.DB_NAME || 'campus_connect';
+
+schemaSql = schemaSql.replace(/CREATE DATABASE IF NOT EXISTS .*?;[\s\S]*?USE .*?;/, `CREATE DATABASE IF NOT EXISTS ${databaseName};\nUSE ${databaseName};`);
 
 console.log('Connecting to database...');
 
