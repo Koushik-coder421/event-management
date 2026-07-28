@@ -8,15 +8,29 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173').split(',').map((origin) => origin.trim()).filter(Boolean);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Default Route
 app.get('/', (req, res) => {
     res.send('Welcome to CampusConnect API');
+});
+
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
 });
 
 const authRoutes = require('./routes/authRoutes');
@@ -40,7 +54,7 @@ app.use('/api/upload', uploadRoutes);
 
 const cleanupTask = require('./cleanup_uploads');
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
 
     // Run cleanup on startup

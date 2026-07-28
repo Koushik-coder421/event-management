@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+const normalizeBaseUrl = (value) => (value ? value.replace(/\/$/, '') : '');
+const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const configuredBaseUrl = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || '');
+const defaultBaseUrl = isLocalHost ? `http://${window.location.hostname}:3000` : '';
+const baseUrl = configuredBaseUrl || defaultBaseUrl;
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || `http://${window.location.hostname}:3000/api`,
+    baseURL: baseUrl ? `${baseUrl}/api` : '/api',
 });
 
 api.interceptors.request.use((config) => {
