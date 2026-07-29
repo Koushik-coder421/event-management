@@ -272,7 +272,7 @@ async function syncExcelFile() {
              FROM Registrations r 
              JOIN Events e ON r.EventID = e.EventID 
              LEFT JOIN Clubs c ON e.ClubID = c.ClubID
-             ORDER BY c.ClubName, e.EventTitle, r.RegisteredAt ASC`
+             ORDER BY c.ClubName, e.EventTitle, r.RegistrationDate ASC`
         );
 
         // Group by EventID
@@ -356,7 +356,7 @@ exports.getEventRegistrations = async (req, res) => {
 
         // Fetch all registrations for this event
         const [rows] = await require('../config/db').execute(
-            'SELECT * FROM Registrations WHERE EventID = ? ORDER BY RegisteredAt DESC',
+            'SELECT * FROM Registrations WHERE EventID = ? ORDER BY RegistrationDate DESC',
             [eventId]
         );
 
