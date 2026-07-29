@@ -446,65 +446,132 @@ exports.downloadReport = async (req, res) => {
 exports.downloadClubReport = async (req, res) => {
     try {
         const userRole = (req.user.role || req.user.Role || '').toLowerCase();
-        if (userRole !== 'clubadmin' && userRole !== 'admin' && userRole !== 'super admin') {
-            return res.status(403).json({ message: 'Unauthorized access' });
-        }
 
-        // 1. Get ClubID for this user
-        const [clubs] = await require('../config/db').execute('SELECT ClubID, ClubName FROM Clubs WHERE CreatedBy = ?', [req.user.id]);
-        if (clubs.length === 0) {
-            return res.status(404).json({ message: 'No club associated with your account' });
-        }
-        const myClub = clubs[0];
-
-        // 2. Fetch all events for this club
-        const [events] = await require('../config/db').execute('SELECT EventID, EventTitle FROM Events WHERE ClubID = ?', [myClub.ClubID]);
-
-        if (events.length === 0) {
-            return res.status(404).json({ 
-                message: 'No events found. Create an event first to download the report.' 
+        if (
+            userRole !== 'clubadmin' &&
+            userRole !== 'admin' &&
+            userRole !== 'super admin'
+        ) {
+            return res.status(403).json({
+                message: 'Unauthorized access'
             });
         }
 
-        // 3. Create Workbook
+
+        // Get correct user id from token
+        const userId =
+            req.user.id ||
+            req.user.UserID ||
+            req.user.userId;
+
+
+        console.log("Club report requested by user:", userId);
+
+
+        // Find club owned by this manager
+        const [clubs] = await require('../config/db').execute(
+            'SELECT ClubID, ClubName FROM Clubs WHERE CreatedBy = ?',
+            [userId]
+        );
+
+
+        console.log("Club details:", clubs);
+
+
+        if (clubs.length === 0) {
+            return res.status(404).json({
+                message: 'No club associated with this account'
+            });
+        }
+
+
+        const myClub = clubs[0];
+
+
+        // Get events of this club
+        const [events] = await require('../config/db').execute(
+            'SELECT EventID, EventTitle FROM Events WHERE ClubID = ?',
+            [myClub.ClubID]
+        );
+
+
+        if (events.length === 0) {
+            return res.status(404).json({
+                message: 'No events found for this club'
+            });
+        }
+
+
         const workbook = xlsx.utils.book_new();
 
+
         for (const event of events) {
+
             const [registrations] = await require('../config/db').execute(
                 'SELECT * FROM Registrations WHERE EventID = ? ORDER BY RegistrationDate DESC',
                 [event.EventID]
             );
 
-            if (registrations.length > 0) {
-                // Map team members to string for excel
-                const data = registrations.map(r => ({
-                    ...r,
-                    TeamMembers: typeof r.TeamMembers === 'string' ? r.TeamMembers : JSON.stringify(r.TeamMembers)
-                }));
-                const ws = xlsx.utils.json_to_sheet(data);
 
-                // Clean sheet name (max 31 chars)
-                let sheetName = event.EventTitle.substring(0, 31).replace(/[\[\]\*\?\/\\]/g, '');
-                xlsx.utils.book_append_sheet(workbook, ws, sheetName);
-            }
+            const data = registrations.map(reg => ({
+                ...reg,
+                TeamMembers:
+                    typeof reg.TeamMembers === 'string'
+                    ? reg.TeamMembers
+                    : JSON.stringify(reg.TeamMembers)
+            }));
+
+
+            const worksheet = xlsx.utils.json_to_sheet(data);
+
+
+            let sheetName = event.EventTitle
+                .substring(0, 31)
+                .replace(/[\[\]\*\?\/\\]/g, '');
+
+
+            xlsx.utils.book_append_sheet(
+                workbook,
+                worksheet,
+                sheetName || "Event"
+            );
         }
 
+
         if (workbook.SheetNames.length === 0) {
-            return res.status(404).json({ 
-                message: 'No registrations found for your events yet.' 
+            return res.status(404).json({
+                message: 'No registrations found for this club'
             });
         }
 
-        const tempPath = path.join(__dirname, '..', '..', `Report_${myClub.ClubName.replace(/\s+/g, '_')}.xlsx`);
+
+        const tempPath = path.join(
+            process.cwd(),
+            `Report_${myClub.ClubName.replace(/\s+/g, '_')}.xlsx`
+        );
+
+
         xlsx.writeFile(workbook, tempPath);
 
-        res.download(tempPath, `Registrations_${myClub.ClubName}.xlsx`, (err) => {
-            if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
-        });
+
+        res.download(
+            tempPath,
+            `Registrations_${myClub.ClubName}.xlsx`,
+            (err) => {
+                if (fs.existsSync(tempPath)) {
+                    fs.unlinkSync(tempPath);
+                }
+            }
+        );
+
 
     } catch (error) {
+
         console.error("Club Download Error:", error);
-        res.status(500).json({ message: 'Error generating club report' });
+
+        res.status(500).json({
+            message: error.message
+        });
     }
 };
 
