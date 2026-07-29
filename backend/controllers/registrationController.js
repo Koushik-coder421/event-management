@@ -453,7 +453,9 @@ exports.downloadClubReport = async (req, res) => {
         const [events] = await require('../config/db').execute('SELECT EventID, EventTitle FROM Events WHERE ClubID = ?', [myClub.ClubID]);
 
         if (events.length === 0) {
-            return res.status(400).json({ message: 'No events found for your club' });
+            return res.status(404).json({ 
+                message: 'No events found. Create an event first to download the report.' 
+            });
         }
 
         // 3. Create Workbook
@@ -480,7 +482,9 @@ exports.downloadClubReport = async (req, res) => {
         }
 
         if (workbook.SheetNames.length === 0) {
-            return res.status(400).json({ message: 'No registrations found for any of your events' });
+            return res.status(404).json({ 
+                message: 'No registrations found for your events yet.' 
+            });
         }
 
         const tempPath = path.join(__dirname, '..', '..', `Report_${myClub.ClubName.replace(/\s+/g, '_')}.xlsx`);
