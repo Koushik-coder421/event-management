@@ -19,9 +19,9 @@ const transporter = nodemailer.createTransport({
 // Verify transporter connection on startup
 transporter.verify((error, success) => {
     if (error) {
-        console.error("[MAIL] Transporter Configuration Error:", error);
+        console.log("[MAIL] SMTP ERROR:", error);
     } else {
-        console.log("[MAIL] Server is ready to take our messages");
+        console.log("[MAIL] SMTP SERVER READY");
     }
 });
 
@@ -105,7 +105,7 @@ const sendOTPEmail = async (email, name, event, otp, teamName) => {
 
     try {
         await transporter.sendMail({
-            from: `"CampusConnect Terminal" <your_verified_email@gmail.com>`,
+            from: `"CampusConnect Terminal" <ykoushik78@gmail.com>`,
             to: email,
             subject: `[ENTRY PASS] ${event.EventTitle}`,
             html: htmlContent
