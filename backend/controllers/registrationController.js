@@ -5,6 +5,9 @@ const path = require('path');
 const fs = require('fs');
 const { deleteFile } = require('../utils/fileUtils');
 const nodemailer = require('nodemailer');
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-relay.brevo.com',
