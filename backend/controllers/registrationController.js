@@ -310,7 +310,7 @@ async function syncExcelFile() {
                 TransactionID: reg.TransactionID,
                 PaymentMode: reg.PaymentMode || 'Online',
                 PaymentStatus: reg.Status || 'Pending', // Default if undefined
-                Timestamp: new Date(reg.RegisteredAt).toLocaleString()
+                Timestamp: new Date(reg.RegistrationDate).toLocaleString()
             }));
 
             // Generate Sheet Name
@@ -461,7 +461,7 @@ exports.downloadClubReport = async (req, res) => {
 
         for (const event of events) {
             const [registrations] = await require('../config/db').execute(
-                'SELECT * FROM Registrations WHERE EventID = ? ORDER BY RegisteredAt DESC',
+                'SELECT * FROM Registrations WHERE EventID = ? ORDER BY RegistrationDate DESC',
                 [event.EventID]
             );
 
