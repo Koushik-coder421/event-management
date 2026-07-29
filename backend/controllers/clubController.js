@@ -69,6 +69,8 @@ exports.getClubById = async (req, res) => {
     }
 };
 
+
+
 exports.deleteClub = async (req, res) => {
     try {
         const club = await Club.findById(req.params.id);

@@ -414,25 +414,33 @@ exports.cancelRegistration = async (req, res) => {
 
 exports.downloadReport = async (req, res) => {
     try {
-        // High-level auth check (Admin/Super Admin only)
         const userRole = (req.user.role || req.user.Role || '').toLowerCase();
+
         if (userRole !== 'super admin' && userRole !== 'admin') {
-            return res.status(403).json({ message: 'Unauthorized access to report download' });
+            return res.status(403).json({ 
+                message: 'Unauthorized access to report download' 
+            });
         }
 
-        if (!fs.existsSync(EXPORT_XLSX_PATH)) {
-            // Trigger a sync if file missing
-            await syncExcelFile();
-        }
+        // Generate fresh Excel every time
+        await syncExcelFile();
 
         if (fs.existsSync(EXPORT_XLSX_PATH)) {
-            res.download(EXPORT_XLSX_PATH, 'Registrations_Master_Report.xlsx');
+            res.download(
+                EXPORT_XLSX_PATH,
+                'Registrations_Master_Report.xlsx'
+            );
         } else {
-            res.status(404).json({ message: 'Report file not generated yet' });
+            res.status(404).json({ 
+                message: 'Report file not generated yet' 
+            });
         }
+
     } catch (error) {
         console.error("Download Error:", error);
-        res.status(500).json({ message: 'Error generating download' });
+        res.status(500).json({ 
+            message: 'Error generating download' 
+        });
     }
 };
 exports.downloadClubReport = async (req, res) => {
