@@ -4,35 +4,26 @@ const xlsx = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 const { deleteFile } = require('../utils/fileUtils');
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-const dns = require('dns');
+const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-// Check environment variables
 console.log("SMTP Login:", process.env.BREVO_SMTP_LOGIN);
 console.log("SMTP Key exists:", !!process.env.BREVO_SMTP_KEY);
 
-// Check if Render can resolve Brevo's SMTP server
-dns.lookup("smtp-relay.brevo.com", (err, address) => {
-    console.log("DNS Result:", err || address);
-});
-
 const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
+    host: "smtp-relay.brevo.com",
     port: 465,
     secure: true,
-    family: 4,          // Force IPv4
-    logger: true,       // Enable debug logs
-    debug: true,
     auth: {
         user: process.env.BREVO_SMTP_LOGIN,
         pass: process.env.BREVO_SMTP_KEY
-    }
+    },
+    logger: true,
+    debug: true
 });
 
-// Verify transporter connection on startup
 transporter.verify((error, success) => {
     if (error) {
         console.log("[MAIL] SMTP ERROR:", error);
@@ -40,6 +31,8 @@ transporter.verify((error, success) => {
         console.log("[MAIL] SMTP SERVER READY");
     }
 });
+
+module.exports = transporter;
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
