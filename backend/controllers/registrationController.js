@@ -4,33 +4,11 @@ const xlsx = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 const { deleteFile } = require('../utils/fileUtils');
-const nodemailer = require("nodemailer");
+
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-console.log("SMTP Login:", process.env.BREVO_SMTP_LOGIN);
-console.log("SMTP Key exists:", !!process.env.BREVO_SMTP_KEY);
-
-const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.BREVO_SMTP_LOGIN,
-        pass: process.env.BREVO_SMTP_KEY
-    },
-    logger: true,
-    debug: true
-});
-
-transporter.verify((error, success) => {
-    if (error) {
-        console.log("[MAIL] SMTP ERROR:", error);
-    } else {
-        console.log("[MAIL] SMTP SERVER READY");
-    }
-});
 
 
 const generateOTP = () => {
@@ -112,15 +90,38 @@ const sendOTPEmail = async (email, name, event, otp, teamName) => {
     `;
 
     try {
-        await transporter.sendMail({
-            from: `"CampusConnect Terminal" <ykoushik78@gmail.com>`,
-            to: email,
-            subject: `[ENTRY PASS] ${event.EventTitle}`,
-            html: htmlContent
-        });
-        console.log(`[SUCCESS] OTP Email dispatched to ${email}`);
+        const response = await axios.post(
+            "https://api.brevo.com/v3/smtp/email",
+            {
+                sender: {
+                    name: "CampusConnect Terminal",
+                    email: "ykoushik78@gmail.com"
+                },
+                to: [
+                    {
+                        email: email,
+                        name: name
+                    }
+                ],
+                subject: `[ENTRY PASS] ${event.EventTitle}`,
+                htmlContent: htmlContent
+            },
+            {
+                headers: {
+                    "accept": "application/json",
+                    "api-key": process.env.BREVO_API_KEY,
+                    "content-type": "application/json"
+                }
+            }
+        );
+
+        console.log("[SUCCESS] Email sent:", response.data);
+
     } catch (error) {
-        console.error("[ERROR] Failed to dispatch OTP email:", error);
+        console.error(
+            "[BREVO API ERROR]",
+            error.response ? error.response.data : error.message
+        );
     }
 };
 
