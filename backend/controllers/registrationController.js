@@ -5,14 +5,27 @@ const path = require('path');
 const fs = require('fs');
 const { deleteFile } = require('../utils/fileUtils');
 const nodemailer = require('nodemailer');
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
+const dns = require('dns');
 
 dotenv.config();
+
+// Check environment variables
+console.log("SMTP Login:", process.env.BREVO_SMTP_LOGIN);
+console.log("SMTP Key exists:", !!process.env.BREVO_SMTP_KEY);
+
+// Check if Render can resolve Brevo's SMTP server
+dns.lookup("smtp-relay.brevo.com", (err, address) => {
+    console.log("DNS Result:", err || address);
+});
 
 const transporter = nodemailer.createTransport({
     host: 'smtp-relay.brevo.com',
     port: 587,
     secure: false,
+    family: 4,          // Force IPv4
+    logger: true,       // Enable debug logs
+    debug: true,
     auth: {
         user: process.env.BREVO_SMTP_LOGIN,
         pass: process.env.BREVO_SMTP_KEY
