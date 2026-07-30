@@ -600,7 +600,7 @@ const SuperAdminDashboard = () => {
                             <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-10">Cross-Club Deployment Interface</p>
                             <form onSubmit={handleAddClub} className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-6">
-                                    <input required placeholder="Registry Name" className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:border-cyan-500/40 transition-all" value={newClub.name} onChange={e => setNewClub({ ...newClub, name: e.target.value })} />
+                                    <input required placeholder="Club Name" className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:border-cyan-500/40 transition-all" value={newClub.name} onChange={e => setNewClub({ ...newClub, name: e.target.value })} />
                                     <input required placeholder="Manager Signal" type="email" className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:border-cyan-500/40 transition-all" value={newClub.email} onChange={e => setNewClub({ ...newClub, email: e.target.value })} />
                                 </div>
                                 <input required placeholder="Initial Auth Key" type="password" className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:border-cyan-500/40 transition-all" value={newClub.password} onChange={e => setNewClub({ ...newClub, password: e.target.value })} />

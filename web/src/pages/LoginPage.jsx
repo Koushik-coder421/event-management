@@ -101,7 +101,7 @@ const LoginPage = () => {
 
                 <div className="mt-8 text-center">
                     <p className="text-sm text-indigo-200/40">
-                        Securing Campus Connectivity since 2024
+                        Securing Campus Connectivity since 2025
                     </p>
                 </div>
             </div>
