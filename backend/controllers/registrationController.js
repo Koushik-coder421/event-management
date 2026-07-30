@@ -94,8 +94,8 @@ const sendOTPEmail = async (email, name, event, otp, teamName) => {
             "https://api.brevo.com/v3/smtp/email",
             {
                 sender: {
-                    name: "CampusConnect Terminal",
-                    email: "ykoushik78@gmail.com"
+                    name: process.env.BREVO_SENDER_NAME,
+                    email: process.env.BREVO_SENDER_EMAIL
                 },
                 to: [
                     {
