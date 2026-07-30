@@ -32,7 +32,6 @@ transporter.verify((error, success) => {
     }
 });
 
-module.exports = transporter;
 
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
