@@ -364,7 +364,7 @@ const EventDetails = () => {
                                                     value={rollNumber}
                                                     onChange={e => setRollNumber(e.target.value)}
                                                     className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500/40 transition-all font-black uppercase text-xl text-white tracking-widest placeholder:text-white/20"
-                                                    placeholder="23P81A62XX"
+                                                    placeholder="23P81AXXXX"
                                                 />
                                             </div>
                                             {error && (
