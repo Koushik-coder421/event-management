@@ -47,7 +47,7 @@ event-management
 
 ## ⚙️ Installation
 Clone the repository:
-```bash
+```bash```
 git clone https://github.com/Koushik-coder421/event-management.git
 
 Backend Setup
@@ -74,14 +74,27 @@ Do not upload sensitive credentials.
 
 The project includes:
 
-Dashboard
-Admin Portal
-Club Management
-Event Management
-Registration Workflow
+event-management
+ ├── photos
+ │    ├── dashboard.png
+ │    ├── superadmin.png
+ │    ├── events.png
+ │    └── login.png
+
+       
 
 👨‍💻 Developer
 YENAGANTI KOUSHIK
 
 GitHub:
 https://github.com/Koushik-coder421
+
+## 🌐 Live Demo
+
+Frontend: https://event-management-ashy-three.vercel.app/
+
+Backend: https://campus-connect-2o8f.onrender.com
+
+## 📄 License
+
+This project is developed for educational purposes.
